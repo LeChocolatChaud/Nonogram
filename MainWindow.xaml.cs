@@ -28,7 +28,6 @@ namespace Nonogram
     public partial class MainWindow : Window
     {
         // some sort of global variables
-        private string levelName = "level1";
         private bool saved = false;
         private List<Rectangle> tiles = new List<Rectangle>();
         private List<Label> numbers = new List<Label>();
@@ -235,7 +234,6 @@ namespace Nonogram
                 MessageBox.Show("Level file not found", "Exception");
                 return;
             }
-            levelName = FilenameInput.Text; // save the name only if the level json is found
             StreamReader streamReader = new StreamReader(fileStream, Encoding.UTF8);
             string levelJson = streamReader.ReadToEnd(); // raw json text
             streamReader.Close();
@@ -323,7 +321,7 @@ namespace Nonogram
         /// <see cref="Save"/>
         private void LoadProgress(object sender, RoutedEventArgs e) // load your progress in ./saves/%levelname%.json
         {
-            string saveFileName = ".\\saves\\" + levelName + ".json";
+            string saveFileName = ".\\saves\\" + FilenameInput.Text + ".json";
             FileStream fileStream;
             try
             {
@@ -452,7 +450,11 @@ namespace Nonogram
         private void Save(object sender, RoutedEventArgs e) // save your progress in ./saves/%levelname%.json
         {
             // please inform that your progress is saved in level1.json if the level name is not defined!
-            string filename = ".\\saves\\" + levelName + ".json";
+            if (!Directory.Exists(".\\saves\\"))
+            {
+                Directory.CreateDirectory(".\\saves\\");
+            }
+            string filename = ".\\saves\\" + FilenameInput.Text + ".json";
             FileStream fileStream = new FileStream(filename, FileMode.Create, FileAccess.Write);
             Utf8JsonWriter jsonWriter = new Utf8JsonWriter(fileStream); // json writer
             jsonWriter.WriteStartArray();
